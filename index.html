@@ -1,0 +1,393 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Toko Online — Template VSCode</title>
+  <meta name="description" content="Template toko online sederhana untuk tugas atau prototipe. HTML, CSS, JS dalam satu file." />
+
+  <style>
+    /* ====== Reset & Variables ====== */
+    :root{
+      --bg:#0f172a; --card:#0b1220; --accent:#06b6d4; --muted:#94a3b8; --glass: rgba(255,255,255,0.03);
+      --maxw:1100px; --radius:12px; --shadow:0 8px 24px rgba(2,6,23,0.6);
+      --glass-2: rgba(255,255,255,0.02);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; font-family: Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+      background: radial-gradient(1200px 600px at 10% 10%, rgba(6,182,212,0.06), transparent),
+                  linear-gradient(160deg,#071028 0%, #081029 50%, #071025 100%);
+      color:#e6eef8; -webkit-font-smoothing:antialiased; padding:32px; display:flex; justify-content:center;
+    }
+    .wrap{width:100%; max-width:var(--maxw)}
+
+    /* ====== Header ====== */
+    header{display:flex; gap:16px; align-items:center; justify-content:space-between; margin-bottom:20px}
+    .brand{display:flex; gap:12px; align-items:center}
+    .logo{width:56px; height:56px; background:linear-gradient(135deg,var(--accent),#7c3aed); border-radius:12px; display:grid; place-items:center; font-weight:700}
+    .title{font-size:18px; letter-spacing:0.6px}
+    .subtitle{font-size:12px; color:var(--muted)}
+
+    /* ====== Controls ====== */
+    .controls{display:flex; gap:10px; align-items:center}
+    .search{background:var(--glass); padding:8px 12px; border-radius:999px; display:flex; gap:8px; align-items:center; min-width:260px}
+    .search input{background:transparent; border:0; outline:none; color:inherit}
+    .btn{background:linear-gradient(90deg,var(--accent),#7c3aed); border:0; padding:10px 14px; border-radius:10px; cursor:pointer; font-weight:600}
+    .ghost{background:transparent; border:1px solid rgba(255,255,255,0.06); padding:8px 12px; border-radius:10px; cursor:pointer}
+
+    /* ====== Layout ====== */
+    .main{display:grid; grid-template-columns: 1fr 360px; gap:18px; align-items:start}
+    @media(max-width:980px){.main{grid-template-columns:1fr} .sidebar{order:2}}
+
+    /* ====== Product Grid ====== */
+    .products{display:grid; grid-template-columns: repeat(auto-fill, minmax(220px,1fr)); gap:16px}
+    .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent); border-radius:var(--radius); padding:12px; box-shadow:var(--shadow); display:flex; flex-direction:column; gap:10px}
+    .thumb{height:150px; border-radius:10px; display:grid; place-items:center; background:linear-gradient(135deg,#0b1220,#081226); overflow:hidden}
+    .thumb img{width:100%; height:100%; object-fit:cover}
+    .meta{display:flex; justify-content:space-between; gap:8px; align-items:center}
+    .name{font-weight:700}
+    .price{font-weight:800; color:var(--accent)}
+    .desc{color:var(--muted); font-size:13px; min-height:36px}
+    .card .actions{display:flex; gap:8px}
+
+    /* ====== Sidebar Cart ====== */
+    .sidebar{position:sticky; top:18px; background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent); border-radius:var(--radius); padding:14px; box-shadow:var(--shadow)}
+    .cart-empty{color:var(--muted); text-align:center; padding:40px 10px}
+    .cart-list{display:flex; flex-direction:column; gap:10px; max-height:420px; overflow:auto; margin-bottom:10px}
+    .cart-item{display:flex; gap:10px; align-items:center; background:var(--glass-2); padding:8px; border-radius:8px}
+    .cart-item img{width:48px; height:48px; object-fit:cover; border-radius:6px}
+    .qty{display:flex; gap:6px; align-items:center}
+    .small{font-size:13px; color:var(--muted)}
+
+    /* ====== Modal ====== */
+    .modal{position:fixed; inset:0; display:none; place-items:center; background:rgba(2,6,23,0.55); z-index:60}
+    .modal.open{display:grid}
+    .modal-card{width:min(940px,96%); background:linear-gradient(180deg,#071026, #061021); border-radius:14px; padding:18px}
+    .modal-body{display:grid; grid-template-columns:1fr 320px; gap:12px}
+    .modal-thumb{height:320px; border-radius:10px; overflow:hidden}
+
+    /* ====== Admin panel (simple) ====== */
+    .admin{margin-top:14px; background:transparent; border-radius:10px; padding:10px}
+    .form-row{display:flex; gap:8px}
+    input[type=text], input[type=number], textarea, select{background:transparent; border:1px dashed rgba(255,255,255,0.04); padding:8px; border-radius:8px; color:inherit}
+
+    /* ====== Footer ====== */
+    footer{margin-top:18px; color:var(--muted); text-align:center}
+
+    /* ====== Tiny helpers ====== */
+    .pill{background:rgba(255,255,255,0.03); padding:6px 8px; border-radius:999px}
+    .muted{color:var(--muted)}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <div class="logo">T</div>
+        <div>
+          <div class="title">Toko Aing — Mini Store</div>
+          <div class="subtitle">Template buat tugas / prototipe — buka di VSCode</div>
+        </div>
+      </div>
+
+      <div class="controls">
+        <div class="search">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="11" cy="11" r="6" stroke="currentColor" stroke-width="1.6"/></svg>
+          <input id="q" placeholder="Cari produk..." />
+        </div>
+        <button class="ghost" id="viewCartBtn">Keranjang (<span id="cartCount">0</span>)</button>
+        <button class="btn" id="clearStorage">Reset</button>
+      </div>
+    </header>
+
+    <main class="main">
+      <section>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px">
+          <h2 style="margin:0">Produk</h2>
+          <div class="muted">Tersedia <span id="prodCount">0</span> item</div>
+        </div>
+
+        <div class="products" id="products"></div>
+
+        <div class="admin">
+          <h3 style="margin:6px 0">Tambah Produk (Admin kecil)</h3>
+          <div style="display:flex; gap:8px; flex-wrap:wrap">
+            <input id="pName" placeholder="Nama produk" style="flex:2" />
+            <input id="pPrice" type="number" placeholder="Harga (mis. 49000)" style="width:150px" />
+            <input id="pImg" placeholder="URL gambar (opsional)" style="flex:1" />
+            <button class="btn" id="addProduct">Tambah</button>
+          </div>
+          <small class="muted">Produk ikut disimpan di localStorage. Bukan server, jadi aman dari hacker tapi riskan ke hapus.</small>
+        </div>
+      </section>
+
+      <aside class="sidebar">
+        <h3 style="margin-top:0">Keranjang</h3>
+        <div id="cartArea">
+          <div class="cart-empty" id="cartEmpty">Keranjang kosong, belanja dulu lah.</div>
+          <div class="cart-list" id="cartList" style="display:none"></div>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px">
+            <div>
+              <div class="small muted">Total</div>
+              <div style="font-weight:800; font-size:18px" id="cartTotal">Rp0</div>
+            </div>
+            <div style="display:flex; gap:8px">
+              <button class="ghost" id="checkoutBtn">Checkout</button>
+              <button class="btn" id="clearCart">Kosongkan</button>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top:18px">
+          <h4 style="margin:8px 0">Filter cepat</h4>
+          <div style="display:flex; gap:8px; flex-wrap:wrap">
+            <button class="pill" data-filter="all">Semua</button>
+            <button class="pill" data-filter="cheap">Murah</button>
+            <button class="pill" data-filter="exp">Premium</button>
+          </div>
+        </div>
+
+        <div style="margin-top:18px">
+          <h4 style="margin:8px 0">Tentang</h4>
+          <div class="small muted">Ini cuma template — gak pake server. Cocok buat tugas VSCode.</div>
+        </div>
+      </aside>
+    </main>
+
+    <footer>
+      <small class="muted">Built with rasa malas dan kopi. Simpen file ini sebagai <strong>index.html</strong> lalu buka di browser atau Live Server di VSCode.</small>
+    </footer>
+  </div>
+
+  <!-- Modal detail produk -->
+  <div class="modal" id="modal">
+    <div class="modal-card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px">
+        <strong id="mName">Nama</strong>
+        <button class="ghost" id="closeModal">Tutup</button>
+      </div>
+      <div class="modal-body">
+        <div>
+          <div class="modal-thumb" id="mImg" style="background:#091226; display:grid; place-items:center">
+          </div>
+          <p id="mDesc" style="color:var(--muted); margin-top:8px"></p>
+        </div>
+        <div>
+          <div style="display:flex; justify-content:space-between; align-items:center">
+            <div>
+              <div class="small muted">Harga</div>
+              <div style="font-weight:900; font-size:22px; color:var(--accent)" id="mPrice">Rp0</div>
+            </div>
+            <div>
+              <div class="small muted">Stok</div>
+              <div id="mStock">10</div>
+            </div>
+          </div>
+
+          <div style="margin-top:12px">
+            <div class="small muted">Jumlah</div>
+            <div style="display:flex; gap:8px; align-items:center; margin-top:6px">
+              <button class="ghost" id="mDec">-</button>
+              <div id="mQty">1</div>
+              <button class="btn" id="mInc">+</button>
+            </div>
+            <div style="margin-top:12px">
+              <button class="btn" id="mAdd">Tambah ke Keranjang</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ====== Utilities ======
+    const fmt = (n)=> 'Rp'+Number(n).toLocaleString('id-ID');
+    const q = (s)=> document.querySelector(s);
+    const qa = (s)=> Array.from(document.querySelectorAll(s));
+
+    // ====== Sample data ======
+    const starter = [
+      {id: 'p-1', name:'Kaos Sekolah Retro', price:79000, img: placeholderSvg('Kaos Retro'), desc:'Kaos bahan katun, nyaman buat hari-hari biasa.'},
+      {id: 'p-2', name:'Tas Punggung Minimalis', price:120000, img: placeholderSvg('Tas Minimalis'), desc:'Tahan air ringan, pas buat kuliah.'},
+      {id: 'p-3', name:'Sepatu Casual Low', price:199000, img: placeholderSvg('Sepatu Casual'), desc:'Desain kasual yang bisa buat ngampus atau jalan.'},
+      {id: 'p-4', name:'Topi Snapback', price:45000, img: placeholderSvg('Topi Snapback'), desc:'Biar makin gaul, dipake pas hangout.'},
+      {id: 'p-5', name:'Sticker Pack 12pcs', price:25000, img: placeholderSvg('Sticker Pack'), desc:'Hias laptop, binder, atau motor.'}
+    ];
+
+    // create placeholder inline SVG as data URI
+    function placeholderSvg(text){
+      const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='600' height='400'>
+        <defs>
+          <linearGradient id='g' x1='0' x2='1'>
+            <stop offset='0' stop-color='#0ea5a4'/>
+            <stop offset='1' stop-color='#7c3aed'/>
+          </linearGradient>
+        </defs>
+        <rect width='100%' height='100%' fill='url(#g)' rx='8' />
+        <text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' font-family='Arial' font-size='28' fill='rgba(255,255,255,0.95)'>${escapeHtml(text)}</text>
+      </svg>`;
+      return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
+    }
+    function escapeHtml(s){ return (s+'').replace(/[&<>\"']/g, c=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;" }[c])); }
+
+    // ====== State ======
+    let products = load('products') || starter.slice();
+    let cart = load('cart') || {};
+    let filter = 'all';
+
+    // ====== Persistence ======
+    function save(k,v){ localStorage.setItem(k, JSON.stringify(v)); }
+    function load(k){ try{ return JSON.parse(localStorage.getItem(k)); }catch(e){return null} }
+
+    // ====== Render ======
+    function renderProducts(list){
+      const wrap = q('#products'); wrap.innerHTML = '';
+      list.forEach(p=>{
+        const card = document.createElement('div'); card.className='card';
+        card.innerHTML = `
+          <div class="thumb"><img src="${p.img}" alt="${escapeHtml(p.name)}"/></div>
+          <div class="meta"><div class="name">${escapeHtml(p.name)}</div><div class="price">${fmt(p.price)}</div></div>
+          <div class="desc">${escapeHtml(p.desc || 'Tidak ada deskripsi')}</div>
+          <div class="actions">
+            <button class="ghost" data-id="${p.id}" data-act="view">Detail</button>
+            <button class="btn" data-id="${p.id}" data-act="add">Beli</button>
+          </div>
+        `;
+        wrap.appendChild(card);
+      });
+      q('#prodCount').textContent = list.length;
+    }
+
+    function renderCart(){
+      const listEl = q('#cartList'); const empty = q('#cartEmpty');
+      const ids = Object.keys(cart);
+      if(ids.length===0){ empty.style.display='block'; listEl.style.display='none'; q('#cartCount').textContent='0'; q('#cartTotal').textContent = fmt(0); return; }
+      empty.style.display='none'; listEl.style.display='flex'; listEl.innerHTML='';
+      let total=0; ids.forEach(id=>{
+        const {qty, product} = cart[id];
+        total += product.price * qty;
+        const itm = document.createElement('div'); itm.className='cart-item';
+        itm.innerHTML = `
+          <img src="${product.img}" alt="${escapeHtml(product.name)}"/>
+          <div style="flex:1">
+            <div style="display:flex; justify-content:space-between"><div>${escapeHtml(product.name)}</div><div class="price">${fmt(product.price)}</div></div>
+            <div class="small muted">subtotal: ${fmt(product.price*qty)}</div>
+          </div>
+          <div class="qty">
+            <button class="ghost" data-id="${id}" data-act="dec">-</button>
+            <div>${qty}</div>
+            <button class="ghost" data-id="${id}" data-act="inc">+</button>
+            <button class="ghost" data-id="${id}" data-act="rem">x</button>
+          </div>
+        `;
+        listEl.appendChild(itm);
+      });
+      q('#cartCount').textContent = ids.length;
+      q('#cartTotal').textContent = fmt(total);
+      save('cart', cart);
+    }
+
+    // ====== Events ======
+    document.addEventListener('click', (e)=>{
+      const t = e.target;
+      if(t.dataset && t.dataset.act){
+        const id = t.dataset.id;
+        const act = t.dataset.act;
+        if(act==='add'){ addToCart(id,1); }
+        if(act==='view'){ openModal(id); }
+        if(act==='dec'){ changeQty(id, -1); }
+        if(act==='inc'){ changeQty(id, +1); }
+        if(act==='rem'){ removeItem(id); }
+      }
+    });
+
+    q('#q').addEventListener('input', (e)=>{
+      search(e.target.value);
+    });
+
+    qa('[data-filter]').forEach(btn=> btn.addEventListener('click', ()=>{
+      filter = btn.dataset.filter; applyFilters();
+    }));
+
+    q('#addProduct').addEventListener('click', ()=>{
+      const name = q('#pName').value.trim();
+      const price = Number(q('#pPrice').value) || 0;
+      const img = q('#pImg').value.trim() || placeholderSvg(name || 'Produk Baru');
+      if(!name || price<=0){ alert('Isi nama dan harga yang valid njir'); return; }
+      const newP = {id: 'p-'+Date.now(), name, price, img, desc: 'Produk tambahan oleh admin.'};
+      products.unshift(newP); save('products', products); applyFilters(); q('#pName').value=''; q('#pPrice').value=''; q('#pImg').value='';
+    });
+
+    q('#clearStorage').addEventListener('click', ()=>{
+      if(confirm('Reset semua data local?')){ localStorage.clear(); products = starter.slice(); cart = {}; save('products', products); renderAll(); }
+    });
+
+    q('#viewCartBtn').addEventListener('click', ()=>{
+      window.scrollTo({top:0, behavior:'smooth'}); q('#cartList').style.display='flex';
+    });
+
+    q('#clearCart').addEventListener('click', ()=>{ if(confirm('Kosongkan keranjang?')){ cart={}; save('cart', cart); renderCart(); } });
+
+    q('#checkoutBtn').addEventListener('click', ()=>{
+      if(Object.keys(cart).length===0){ alert('Keranjang kosong, belanja dulu lah.'); return; }
+      // Simulasi checkout
+      const total = Object.values(cart).reduce((s,c)=>s + c.product.price * c.qty, 0);
+      alert('Checkout berhasil. Total: '+fmt(total)+"\n(Ini cuma simulasi. Gak ada server, bro.)");
+      cart={}; save('cart', cart); renderCart();
+    });
+
+    // Modal behaviour
+    q('#closeModal').addEventListener('click', ()=> closeModal());
+    q('#mInc').addEventListener('click', ()=>{ q('#mQty').textContent = Number(q('#mQty').textContent)+1; });
+    q('#mDec').addEventListener('click', ()=>{ const v=Number(q('#mQty').textContent); if(v>1) q('#mQty').textContent=v-1; });
+    q('#mAdd').addEventListener('click', ()=>{ const id = q('#mAdd').dataset.id; const qty = Number(q('#mQty').textContent); addToCart(id, qty); closeModal(); });
+
+    // ====== Cart functions ======
+    function addToCart(id, qty=1){
+      const prod = products.find(p=>p.id===id);
+      if(!prod) { alert('Produk gak ketemu.'); return; }
+      if(cart[id]) cart[id].qty += qty; else cart[id] = {qty:qty, product: prod};
+      save('cart', cart); renderCart();
+      flashMessage('Tambah ' + prod.name + ' x'+qty);
+    }
+    function changeQty(id, delta){ if(!cart[id]) return; cart[id].qty += delta; if(cart[id].qty<=0) delete cart[id]; save('cart', cart); renderCart(); }
+    function removeItem(id){ delete cart[id]; save('cart', cart); renderCart(); }
+
+    // ====== Modal functions ======
+    function openModal(id){
+      const p = products.find(x=>x.id===id); if(!p) return;
+      q('#modal').classList.add('open'); q('#mName').textContent = p.name; q('#mPrice').textContent = fmt(p.price); q('#mDesc').textContent = p.desc || 'Tidak ada'; q('#mStock').textContent = 99; q('#mQty').textContent = 1;
+      q('#mImg').innerHTML = `<img src="${p.img}" alt="${escapeHtml(p.name)}" style="width:100%; height:100%; object-fit:cover; border-radius:8px"/>`;
+      q('#mAdd').dataset.id = p.id;
+    }
+    function closeModal(){ q('#modal').classList.remove('open'); }
+
+    // ====== Search & Filters ======
+    function search(term){ term = term.trim().toLowerCase(); applyFilters(term); }
+    function applyFilters(term=''){
+      let list = products.slice();
+      if(filter==='cheap') list = list.filter(p=>p.price < 50000);
+      if(filter==='exp') list = list.filter(p=>p.price >= 150000);
+      if(term) list = list.filter(p=> (p.name+p.desc).toLowerCase().includes(term));
+      renderProducts(list);
+    }
+
+    // ====== Flash message tiny ======
+    function flashMessage(txt){
+      const el = document.createElement('div'); el.style.position='fixed'; el.style.right='18px'; el.style.bottom='18px'; el.style.padding='10px 14px'; el.style.borderRadius='10px'; el.style.background='linear-gradient(90deg,var(--accent),#7c3aed)'; el.style.boxShadow='var(--shadow)'; el.style.zIndex=999; el.textContent = txt; document.body.appendChild(el);
+      setTimeout(()=> el.style.opacity=0,1800); setTimeout(()=> el.remove(),2400);
+    }
+
+    // ====== Init ======
+    function renderAll(){ applyFilters(); renderCart(); }
+    renderAll();
+
+    // ====== Small dev helpers ======
+    // If user loads custom products first time, seed them
+    if(!load('products')) save('products', products);
+  </script>
+</body>
+</html>
